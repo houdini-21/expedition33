@@ -1,14 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../database/prisma.service';
-import { IBookingRepository } from '../../domain/booking/booking.repository';
-import { Booking } from '../../domain/booking/booking.entity';
-
+import { PrismaService } from '@infra/persistence/prisma/prisma.service';
+import { Booking } from '@domain/entities/booking.entity';
+import { IBookingRepository } from '@domain/repository/booking.repository';
 @Injectable()
 export class BookingPrismaRepository implements IBookingRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Solape básico por rangos: [startsAt, endsAt) — half-open interval
+   * Check if there are any bookings that overlap with the given time range.
    */
   async findOverlaps(
     startsAt: Date,

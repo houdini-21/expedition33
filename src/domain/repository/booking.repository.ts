@@ -1,4 +1,4 @@
-import { Booking } from './booking.entity';
+import { Booking } from '../entities/booking.entity';
 
 export interface IBookingRepository {
   /**
