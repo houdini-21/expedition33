@@ -1,4 +1,4 @@
-import { Booking } from '../entities/booking.entity';
+import { Booking } from '@domain/entities/booking.entity';
 
 export interface IBookingRepository {
   /**
@@ -42,3 +42,5 @@ export interface IBookingRepository {
    */
   delete(id: string): Promise<void>;
 }
+
+export const BOOKING_REPOSITORY = 'BookingRepository';
