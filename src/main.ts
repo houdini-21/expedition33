@@ -20,7 +20,7 @@ async function bootstrap() {
   app.enableCors();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   await app.listen(process.env.PORT ? Number(process.env.PORT) : 4000);
   console.log(
@@ -28,7 +28,7 @@ async function bootstrap() {
     process.env.PORT ? Number(process.env.PORT) : 4000,
   );
   console.log(
-    `Swagger UI is available at http://localhost:${process.env.PORT ? Number(process.env.PORT) : 4000}/api`,
+    `Swagger UI is available at http://localhost:${process.env.PORT ? Number(process.env.PORT) : 4000}/docs`,
   );
 }
 void bootstrap();
