@@ -28,6 +28,6 @@ export class AuthController {
       email: user.email,
     });
 
-    return ok({ data: token });
+    return token;
   }
 }

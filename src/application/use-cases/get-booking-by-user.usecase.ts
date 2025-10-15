@@ -8,10 +8,15 @@ export class GetBookingsByUserUseCase {
 
   async listByUser(
     userId: string,
-    startAt?: Date,
-    endAt?: Date,
+    startsAt: string,
+    endsAt: string,
     statusId?: number,
   ) {
-    return this.repo.listByUser(userId, startAt, endAt, statusId);
+    return this.repo.listByUser(
+      userId,
+      new Date(startsAt),
+      new Date(endsAt),
+      statusId,
+    );
   }
 }

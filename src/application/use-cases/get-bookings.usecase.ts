@@ -6,10 +6,10 @@ import type { IBookingRepository } from '@domain/repository/booking.repository';
 export class GetBookingsUseCase {
   constructor(@Inject(BOOKING_REPOSITORY) private repo: IBookingRepository) {}
 
-  async listAllOverlappingBookings(startsAt: Date, endsAt: Date) {
+  async listAllOverlappingBookings(startsAt: string, endsAt: string) {
     if (startsAt >= endsAt) {
       throw new BadRequestException('startsAt must be before endsAt');
     }
-    return this.repo.findAllOverlapping(startsAt, endsAt);
+    return this.repo.findAllOverlapping(new Date(startsAt), new Date(endsAt));
   }
 }

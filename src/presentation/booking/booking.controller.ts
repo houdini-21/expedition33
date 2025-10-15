@@ -21,7 +21,7 @@ import { CreateBookingDto } from '@app/dto/create-booking.dto';
 import { UpdateBookingDto } from '@app/dto/update-booking.dto';
 import { GetBookingsDto } from '@app/dto/get-bookings.dto';
 import { GetBookingsByUserDto } from '@app/dto/get-booking-by-user.dto';
-import { created } from '@common/http/response.types';
+import { created, ok } from '@common/http/response.types';
 import {
   ApiBody,
   ApiConsumes,
@@ -29,7 +29,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { ok } from 'assert';
 
 @ApiTags('Bookings')
 @UseGuards(AuthGuard('jwt'))
@@ -43,6 +42,35 @@ export class BookingController {
     private readonly getBookingsByUser: GetBookingsByUserUseCase,
   ) {}
 
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get all bookings' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'OK' })
+  async findAll(@Query() query: GetBookingsDto) {
+    const result = await this.getBookings.listAllOverlappingBookings(
+      query.startsAt,
+      query.endsAt,
+    );
+    return ok(result);
+  }
+
+  @Get('user/:id')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get a booking by user ID' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'OK' })
+  async findByUser(
+    @Param('id') id: string,
+    @Query() query: GetBookingsByUserDto,
+  ) {
+    const result = await this.getBookingsByUser.listByUser(
+      id,
+      query.startsAt,
+      query.endsAt,
+      query.statusId,
+    );
+    return ok(result);
+  }
+
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a booking' })
@@ -52,16 +80,6 @@ export class BookingController {
   async create(@Req() req: any, @Body() dto: CreateBookingDto) {
     const userId = req.user.userId;
     const result = await this.createBooking.create({ ...dto, userId });
-    return created(result);
-  }
-
-  @Post(':id/cancel')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Cancel a booking' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Cancelled' })
-  async cancel(@Req() req: any, @Param('id') id: string) {
-    const userId = req.user.userId as string;
-    const result = await this.cancelBooking.cancel(id, userId);
     return created(result);
   }
 
@@ -82,32 +100,13 @@ export class BookingController {
     return ok(result);
   }
 
-  @Get()
+  @Post(':id/cancel')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get all bookings' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'OK' })
-  async findAll(@Query() query: GetBookingsDto) {
-    const result = await this.getBookings.listAllOverlappingBookings(
-      query.startDate,
-      query.endDate,
-    );
-    return ok(result);
-  }
-
-  @Get(':id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Get a booking by ID' })
-  @ApiResponse({ status: HttpStatus.OK, description: 'OK' })
-  async findByUser(
-    @Param('id') id: string,
-    @Query() query: GetBookingsByUserDto,
-  ) {
-    const result = await this.getBookingsByUser.listByUser(
-      id,
-      query.startAt,
-      query.endAt,
-      query.statusId,
-    );
+  @ApiOperation({ summary: 'Cancel a booking' })
+  @ApiResponse({ status: HttpStatus.OK, description: 'Cancelled' })
+  async cancel(@Req() req: any, @Param('id') id: string) {
+    const userId = req.user.userId as string;
+    const result = await this.cancelBooking.cancel(id, userId);
     return ok(result);
   }
 }

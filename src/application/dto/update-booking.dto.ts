@@ -15,8 +15,4 @@ export class UpdateBookingDto {
   @ApiProperty({ example: '2023-10-01T11:00:00Z' })
   @IsISO8601()
   endAt!: string;
-
-  @ApiProperty({ example: 'user-id-123' })
-  @IsString()
-  userId!: string;
 }
