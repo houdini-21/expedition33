@@ -1,4 +1,3 @@
-import { created } from '@common/http/response.types';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@infra/persistence/prisma/prisma.service';
 import { Account } from '@domain/entities/account.entity';
@@ -70,6 +69,6 @@ export class UserPrismaRepository implements IAccountRepository {
       include: { accounts: true },
     });
 
-    return created(createdUser);
+    return createdUser;
   }
 }

@@ -30,7 +30,7 @@ export const noContent = (
 });
 
 export const fail = (
-  code: string,
+  code: number,
   message: string,
   data: unknown = null,
 ): ApiResponse => ({

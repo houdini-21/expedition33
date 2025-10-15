@@ -39,12 +39,7 @@ export class AuthService {
 
   login(user: { id: string; email?: string | null }) {
     const payload = { sub: user.id, email: user.email ?? undefined };
-    return {
-      code: 200,
-      message: 'OK',
-      data: {
-        access_token: this.jwt.sign(payload),
-      },
-    };
+
+    return { access_token: this.jwt.sign(payload) };
   }
 }
