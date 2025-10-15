@@ -27,6 +27,29 @@ export class BookingPrismaRepository implements IBookingRepository {
     return !!found;
   }
 
+  async findAllOverlapping(startsAt: Date, endsAt: Date): Promise<Booking[]> {
+    const rows = await this.prisma.booking.findMany({
+      where: {
+        AND: [{ startsAt: { lt: endsAt } }, { endsAt: { gt: startsAt } }],
+      },
+      orderBy: { startsAt: 'asc' },
+    });
+
+    return rows.map(
+      (r) =>
+        new Booking(
+          r.id,
+          r.title,
+          r.startsAt,
+          r.endsAt,
+          r.userId,
+          r.statusId,
+          r.createdAt,
+          r.updatedAt,
+        ),
+    );
+  }
+
   async create(
     data: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>,
   ): Promise<Booking> {
@@ -120,9 +143,5 @@ export class BookingPrismaRepository implements IBookingRepository {
       r.createdAt,
       r.updatedAt,
     );
-  }
-
-  async delete(id: string): Promise<void> {
-    await this.prisma.booking.delete({ where: { id } });
   }
 }

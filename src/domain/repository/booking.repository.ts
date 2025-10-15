@@ -11,6 +11,11 @@ export interface IBookingRepository {
   ): Promise<boolean>;
 
   /**
+   * Find all bookings that overlap with [startsAt, endsAt)
+   */
+  findAllOverlapping(startsAt: Date, endsAt: Date): Promise<Booking[]>;
+
+  /**
    * Create a booking
    */
   create(
@@ -20,7 +25,12 @@ export interface IBookingRepository {
   /**
    * List bookings by user
    */
-  listByUser(userId: string): Promise<Booking[]>;
+  listByUser(
+    userId: string,
+    startAt?: Date,
+    endAt?: Date,
+    statusId?: number,
+  ): Promise<Booking[]>;
 
   /**
    * Get one by id
@@ -36,11 +46,6 @@ export interface IBookingRepository {
       Pick<Booking, 'title' | 'startsAt' | 'endsAt' | 'statusId'>
     >,
   ): Promise<Booking>;
-
-  /**
-   * Delete (soft or hard depending on your use case)
-   */
-  delete(id: string): Promise<void>;
 }
 
 export const BOOKING_REPOSITORY = 'BookingRepository';
