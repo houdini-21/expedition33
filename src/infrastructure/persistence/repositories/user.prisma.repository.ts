@@ -1,3 +1,4 @@
+// @infra/persistence/repositories/user.prisma.repository.ts
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@infra/persistence/prisma/prisma.service';
 import { Account } from '@domain/entities/account.entity';
@@ -70,5 +71,62 @@ export class UserPrismaRepository implements IAccountRepository {
     });
 
     return createdUser;
+  }
+
+  async updateGoogleTokens(params: {
+    userId: string;
+    providerAccountId: string;
+    accessToken?: string | null;
+    refreshToken?: string | null;
+    expiresAt?: Date | null;
+  }): Promise<void> {
+    const {
+      userId,
+      providerAccountId,
+      accessToken = null,
+      refreshToken,
+      expiresAt = null,
+    } = params;
+
+    const existing = await this.prisma.account.findFirst({
+      where: { userId, provider: 'google' },
+      select: { id: true, refreshToken: true },
+    });
+
+    if (!existing) {
+      await this.prisma.account.create({
+        data: {
+          userId,
+          provider: 'google',
+          providerAccountId,
+          accessToken,
+          refreshToken: refreshToken ?? null,
+          expiresAt,
+        },
+      });
+      return;
+    }
+
+    await this.prisma.account.update({
+      where: { id: existing.id },
+      data: {
+        providerAccountId,
+        accessToken,
+        refreshToken: refreshToken ?? existing.refreshToken,
+        expiresAt,
+      },
+    });
+  }
+
+  async isGoogleConnected(userId: string): Promise<boolean> {
+    const acc = await this.prisma.account.findFirst({
+      where: {
+        userId,
+        provider: 'google',
+        refreshToken: { not: null },
+      },
+      select: { id: true },
+    });
+    return !!acc;
   }
 }

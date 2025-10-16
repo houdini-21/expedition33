@@ -27,6 +27,19 @@ export interface IAccountRepository {
     refreshToken?: string;
     expiresAt?: Date;
   }): Promise<any>;
+
+  updateGoogleTokens(params: {
+    userId: string;
+    providerAccountId: string;
+    accessToken?: string | null;
+    refreshToken?: string | null;
+    expiresAt?: Date | null;
+  }): Promise<void>;
+
+  /**
+   * Check if a user has connected their Google account
+   */
+  isGoogleConnected(userId: string): Promise<boolean>;
 }
 
 export const ACCOUNT_REPOSITORY = 'AccountRepository';
