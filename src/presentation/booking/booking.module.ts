@@ -8,8 +8,10 @@ import { CancelBookingUseCase } from '@app/use-cases/cancel-booking.usecase';
 import { UpdateBookingUseCase } from '@app/use-cases/update-booking.usecase';
 import { GetBookingsUseCase } from '@app/use-cases/get-bookings.usecase';
 import { GetBookingsByUserUseCase } from '@app/use-cases/get-booking-by-user.usecase';
+import { GoogleCalendarModule } from '@infra/google-calendar/google-calendar.module';
 
 @Module({
+  imports: [GoogleCalendarModule],
   controllers: [BookingController],
   providers: [
     PrismaService,

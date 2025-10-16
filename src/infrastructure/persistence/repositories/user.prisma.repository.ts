@@ -129,4 +129,22 @@ export class UserPrismaRepository implements IAccountRepository {
     });
     return !!acc;
   }
+
+  async getGoogleTokens(userId: string): Promise<{
+    accessToken: string | null;
+    refreshToken: string | null;
+    expiresAt: Date | null;
+  } | null> {
+    const acc = await this.prisma.account.findFirst({
+      where: { userId, provider: 'google' },
+      select: { accessToken: true, refreshToken: true, expiresAt: true },
+    });
+
+    if (!acc) return null;
+    return {
+      accessToken: acc.accessToken ?? null,
+      refreshToken: acc.refreshToken ?? null,
+      expiresAt: acc.expiresAt ?? null,
+    };
+  }
 }

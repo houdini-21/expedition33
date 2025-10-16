@@ -40,6 +40,12 @@ export interface IAccountRepository {
    * Check if a user has connected their Google account
    */
   isGoogleConnected(userId: string): Promise<boolean>;
+
+  getGoogleTokens(userId: string): Promise<{
+    accessToken: string | null;
+    refreshToken: string | null;
+    expiresAt: Date | null;
+  } | null>;
 }
 
 export const ACCOUNT_REPOSITORY = 'AccountRepository';

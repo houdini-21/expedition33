@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { GoogleCalendarController } from './google-calendar.controller';
-import { GoogleCalendarInfraModule } from '@infra/google-calendar/google-calendar.module';
+import { GoogleCalendarModule } from '@infra/google-calendar/google-calendar.module';
 
 @Module({
-  imports: [GoogleCalendarInfraModule],
+  imports: [GoogleCalendarModule],
   controllers: [GoogleCalendarController],
 })
 export class GoogleCalendarPresentationModule {}
