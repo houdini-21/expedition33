@@ -13,7 +13,15 @@ export const envSchema = z.object({
     .string()
     .url()
     .min(1, 'GOOGLE_CALLBACK_URL is required'),
+  GOOGLE_CALENDAR_CALLBACK_URL: z
+    .string()
+    .url()
+    .min(1, 'GOOGLE_CALENDAR_CALLBACK_URL is required'),
+  APP_POST_CONNECT_REDIRECT: z.string().url().optional().default('/'),
   JWT_EXPIRES_IN: z.string().default('1d'),
+  TOKEN_ENCRYPTION_KEY: z
+    .string()
+    .min(16, 'TOKEN_ENCRYPTION_KEY must be at least 16 characters long'),
 });
 
 export type Env = z.infer<typeof envSchema>;

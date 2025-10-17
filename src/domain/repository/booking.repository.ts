@@ -48,4 +48,4 @@ export interface IBookingRepository {
   ): Promise<Booking>;
 }
 
-export const BOOKING_REPOSITORY = 'BookingRepository';
+export const BOOKING_REPOSITORY = Symbol('BOOKING_REPOSITORY');

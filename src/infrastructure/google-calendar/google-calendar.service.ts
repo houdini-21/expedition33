@@ -4,6 +4,7 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { google, Auth } from 'googleapis';
 import { ACCOUNT_REPOSITORY } from '@domain/repository/account.repository';
 import type { IAccountRepository } from '@domain/repository/account.repository';
@@ -11,26 +12,35 @@ import { IGoogleCalendarPort } from '@app/ports/google-calendar.port';
 
 @Injectable()
 export class GoogleCalendarService implements IGoogleCalendarPort {
-  private readonly oauth: Auth.OAuth2Client;
+  private oauth?: Auth.OAuth2Client;
 
   constructor(
     @Inject(ACCOUNT_REPOSITORY)
     private readonly accounts: IAccountRepository,
-  ) {
-    const cid = process.env.GOOGLE_CLIENT_ID || '';
-    const sec = process.env.GOOGLE_CLIENT_SECRET || '';
-    const cb = process.env.GOOGLE_CALENDAR_CALLBACK_URL || '';
+    private readonly config: ConfigService,
+  ) {}
+
+  // Lazily initialize OAuth client using ConfigService so module instantiation
+  // doesn't throw and tests can provide mocked ConfigService.
+  private getOauthClient(): Auth.OAuth2Client {
+    if (this.oauth) return this.oauth;
+
+    const cid = this.config.get<string>('GOOGLE_CLIENT_ID') || '';
+    const sec = this.config.get<string>('GOOGLE_CLIENT_SECRET') || '';
+    const cb = this.config.get<string>('GOOGLE_CALENDAR_CALLBACK_URL') || '';
     if (!cid || !sec || !cb) {
       throw new Error(
-        'Faltan GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET / GOOGLE_CALENDAR_CALLBACK_URL en process.env',
+        'Missing GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET / GOOGLE_CALENDAR_CALLBACK_URL in configuration',
       );
     }
     this.oauth = new google.auth.OAuth2(cid, sec, cb);
+    return this.oauth;
   }
 
   getAuthUrl(userId: string): string {
     if (!userId) throw new BadRequestException('userId requerido');
-    return this.oauth.generateAuthUrl({
+    const oauth = this.getOauthClient();
+    return oauth.generateAuthUrl({
       access_type: 'offline',
       prompt: 'consent',
       scope: [
@@ -46,7 +56,8 @@ export class GoogleCalendarService implements IGoogleCalendarPort {
   async handleCallback(code: string, stateUserId: string): Promise<void> {
     if (!code || !stateUserId)
       throw new BadRequestException('code/state faltantes en callback');
-    const { tokens } = await this.oauth.getToken(code);
+    const oauth = this.getOauthClient();
+    const { tokens } = await oauth.getToken(code);
 
     await this.accounts.updateGoogleTokens({
       userId: stateUserId,
@@ -58,7 +69,7 @@ export class GoogleCalendarService implements IGoogleCalendarPort {
   }
 
   get postConnectRedirect(): string {
-    return process.env.APP_POST_CONNECT_REDIRECT || '/';
+    return this.config.get<string>('APP_POST_CONNECT_REDIRECT') || '/';
   }
 
   async isConnected(userId: string): Promise<boolean> {
@@ -67,21 +78,22 @@ export class GoogleCalendarService implements IGoogleCalendarPort {
 
   // ---------- NUEVO: util para setear credenciales del usuario ----------
   private async authFor(userId: string): Promise<Auth.OAuth2Client> {
-    const creds = await this.accounts.getGoogleTokens(userId); // <-- agrega este método en tu repo si no existe
+    const oauth = this.getOauthClient();
+    const creds = await this.accounts.getGoogleTokens(userId);
     if (!creds?.refreshToken) {
       // estrictos para el test (si no está conectado, bloquea creación)
       throw new UnauthorizedException('Google Calendar not connected');
       // si quieres permitir creación sin calendar, devuelve this.oauth sin creds y hasBusy() -> false
     }
 
-    this.oauth.setCredentials({
+    oauth.setCredentials({
       access_token: creds.accessToken ?? undefined,
       refresh_token: creds.refreshToken ?? undefined,
       expiry_date: creds.expiresAt
         ? new Date(creds.expiresAt).getTime()
         : undefined,
     });
-    return this.oauth;
+    return oauth;
   }
 
   async hasBusy(userId: string, start: Date, end: Date): Promise<boolean> {

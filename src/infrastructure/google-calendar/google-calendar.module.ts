@@ -1,14 +1,12 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { GoogleCalendarService } from './google-calendar.service';
-import { PrismaService } from '@infra/persistence/prisma/prisma.service';
-import { ACCOUNT_REPOSITORY } from '@domain/repository/account.repository';
-import { UserPrismaRepository } from '@infra/persistence/repositories/user.prisma.repository';
 import { GOOGLE_CALENDAR_PORT } from '@app/ports/google-calendar.port';
+import { PersistenceModule } from '@infra/persistence/persistence.module';
 
 @Module({
+  imports: [ConfigModule, PersistenceModule],
   providers: [
-    PrismaService,
-    { provide: ACCOUNT_REPOSITORY, useClass: UserPrismaRepository },
     GoogleCalendarService,
     { provide: GOOGLE_CALENDAR_PORT, useExisting: GoogleCalendarService },
   ],

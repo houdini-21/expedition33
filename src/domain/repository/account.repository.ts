@@ -48,4 +48,4 @@ export interface IAccountRepository {
   } | null>;
 }
 
-export const ACCOUNT_REPOSITORY = 'AccountRepository';
+export const ACCOUNT_REPOSITORY = Symbol('ACCOUNT_REPOSITORY');

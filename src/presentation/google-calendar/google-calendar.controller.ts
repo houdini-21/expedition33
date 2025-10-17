@@ -6,17 +6,22 @@ import {
   Res,
   UseGuards,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { GoogleCalendarService } from '@infra/google-calendar/google-calendar.service';
+import { GOOGLE_CALENDAR_PORT } from '@app/ports/google-calendar.port';
+import type { IGoogleCalendarPort } from '@app/ports/google-calendar.port';
 import { ok } from '@common/http/response.types';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 
 type AuthedRequest = Request & { user: { userId: string } };
 
 @Controller('integrations/google')
 export class GoogleCalendarController {
-  constructor(private readonly google: GoogleCalendarService) {}
+  constructor(
+    @Inject(GOOGLE_CALENDAR_PORT)
+    private readonly google: IGoogleCalendarPort,
+  ) {}
 
   @Get()
   ok() {
@@ -38,7 +43,8 @@ export class GoogleCalendarController {
     @Res() res: Response,
   ) {
     await this.google.handleCallback(code, stateUserId);
-    return res.redirect(this.google.postConnectRedirect);
+
+    return res.redirect(String(this.google.postConnectRedirect));
   }
 
   @UseGuards(AuthGuard('jwt'))
