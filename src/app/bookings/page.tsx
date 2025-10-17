@@ -91,7 +91,7 @@ export default function BookingsPage() {
         headerToolbar={{
           left: "prev,next today",
           center: "title",
-          right: "timeGridWeek",
+          right: "dayGridMonth,timeGridWeek,timeGridDay",
         }}
         events={loadEvents}
         dateClick={handleDateClick}
