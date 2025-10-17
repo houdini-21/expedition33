@@ -1,98 +1,95 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📖 Booking Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project implements a **Booking Management System** using **NestJS + Prisma (PostgreSQL)** following the **Hexagonal Architecture (Ports & Adapters)** pattern.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+The goal is to decouple the **business logic** (application/domain) from the **technical details** (infrastructure: Prisma, DB, HTTP framework).
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📂 Project Structure
 
-## Project setup
+The project follows **Hexagonal Architecture** with the following layers:
 
-```bash
-$ yarn install
+- **application/** 💼  
+  Contains DTOs (commands, queries, results), errors, ports (interfaces/contracts), and use cases (Create, Update, Cancel, Get...).
+
+- **domain/** 🧠  
+  Business entities (Booking, Account, Status) and repository interfaces. Pure logic without dependencies.
+
+- **infrastructure/** ⚙️  
+  Adapters for external services and persistence. Includes authentication (Google/JWT), Google Calendar integration, Prisma persistence, and security.
+
+- **presentation/** 🎨  
+  HTTP controllers, modules, DTOs, and mappers for Auth, Booking, Google Calendar, Health.
+
+- **common/** 🔧  
+  Cross-cutting concerns like filters, pipes, and HTTP helpers.
+
+- **config/** ⚙️  
+  Configuration module and environment schema validation.
+
+- **main.ts & app.module.ts**  
+  NestJS bootstrap and root module.
+
+---
+
+## 🚀 Main Endpoints
+
+### 📅 Bookings
+
+- `GET /bookings` → Returns all bookings for the authenticated user (with user info).
+- `GET /bookings/:id` → Returns details of a specific booking.
+- `POST /bookings` → Creates a new booking (validates range and overlaps).
+- `PATCH /bookings/:id` → Updates an existing booking.
+- `PATCH /bookings/:id/cancel` → Cancels a booking (`statusId = 2`).
+
+### 🔐 Authentication (Google OAuth2)
+
+- `GET /auth/google` → Redirects to Google OAuth2.
+- `GET /auth/google/callback` → Handles Google callback and validates user.
+- `GET /auth/me` → Returns authenticated user profile.
+
+### 📅 Google Calendar Integration
+
+- `GET /integrations/google` → Entry point for Google integrations.
+- `GET /integrations/google/oauth-url` → Returns the Google OAuth consent URL.
+- `GET /integrations/google/callback` → Handles Google OAuth2 callback (token exchange).
+- `GET /integrations/google/status` → Checks current Google Calendar connection status.
+
+---
+
+## 📖 API Documentation (Swagger)
+
+This project includes **Swagger UI** for interactive API documentation.
+
+Once the server is running, open:
+
+```
+http://localhost:4000/api/docs
 ```
 
-## Compile and run the project
+Features:
 
-```bash
-# development
-$ yarn run start
+- Automatic generation of docs from decorators.
+- Interactive testing of endpoints.
+- Clear visibility into request DTOs and response schemas.
 
-# watch mode
-$ yarn run start:dev
+---
 
-# production mode
-$ yarn run start:prod
-```
+## 📚 References
 
-## Run tests
+- [Hexagonal Architecture – Alistair Cockburn](https://alistair.cockburn.us/hexagonal-architecture/)
+- [Clean Architecture – Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Domain-Driven Design Community](https://www.dddcommunity.org/)
+- [NestJS Docs – Providers & Dependency Injection](https://docs.nestjs.com/providers)
+- [Prisma Docs](https://www.prisma.io/docs/)
+- Book: _Clean Code_ – Robert C. Martin
+- Book: _Implementing Domain-Driven Design_ – Vaughn Vernon
 
-```bash
-# unit tests
-$ yarn run test
+---
 
-# e2e tests
-$ yarn run test:e2e
+## ✅ Benefits of this Approach
 
-# test coverage
-$ yarn run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ yarn install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- **Scalability**: adapters (Prisma, Google) can be swapped without touching business logic.
+- **Testability**: Use cases can be tested independently using mock ports.
+- **Maintainability**: Clear separation between business rules and infrastructure details.
