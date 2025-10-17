@@ -1,30 +1,79 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
+import { useRouter } from "next/navigation";
+import { http } from "@/api/http";
 
-type AuthCtx = {
-  user: null;
-  loading: boolean;
-  logout: () => void;
+type User = {
+  id: string;
+  name: string;
+  email: string;
+  picture?: string;
 };
 
-const Ctx = createContext<AuthCtx>({
+type AuthContextType = {
+  user: User | null;
+  loading: boolean;
+  logout: () => Promise<void>;
+  refetchUser: () => Promise<void>;
+};
+
+const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: false,
-  logout: () => {},
+  loading: true,
+  logout: async () => {},
+  refetchUser: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [loading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  const logout = () => {
-    window.location.href = "/login";
+  const fetchUser = useCallback(async () => {
+    try {
+      const { user } = await http<{ user: User }>("/me");
+      setUser(user);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
+
+  const logout = async () => {
+    try {
+      await http("/auth/logout", { method: "POST" });
+      setUser(null);
+      router.push("/login"); 
+    } catch (err) {
+      console.error("Error al cerrar sesión", err);
+    }
   };
 
   return (
-    <Ctx.Provider value={{ user: null, loading, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        logout,
+        refetchUser: fetchUser,
+      }}
+    >
       {children}
-    </Ctx.Provider>
+    </AuthContext.Provider>
   );
 }
 
-export const useAuth = () => useContext(Ctx);
+export function useAuth() {
+  return useContext(AuthContext);
+}
