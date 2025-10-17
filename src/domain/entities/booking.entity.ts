@@ -8,5 +8,11 @@ export class Booking {
     public statusId: number,
     public readonly createdAt: Date = new Date(),
     public readonly updatedAt: Date = new Date(),
+    public user?: {
+      id: string | null;
+      name: string | null;
+      email: string | null;
+      image: string | null;
+    },
   ) {}
 }

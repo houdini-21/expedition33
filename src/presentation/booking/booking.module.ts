@@ -7,6 +7,7 @@ import { UpdateBookingUseCase } from '@app/use-cases/update-booking.usecase';
 import { GetBookingsUseCase } from '@app/use-cases/get-bookings.usecase';
 import { GetBookingsByUserUseCase } from '@app/use-cases/get-booking-by-user.usecase';
 import { GoogleCalendarModule } from '@infra/google-calendar/google-calendar.module';
+import { GetBookingByIdUseCase } from '@app/use-cases/get-booking-by-id.usecase';
 
 @Module({
   imports: [GoogleCalendarModule, PersistenceModule],
@@ -17,6 +18,7 @@ import { GoogleCalendarModule } from '@infra/google-calendar/google-calendar.mod
     UpdateBookingUseCase,
     GetBookingsUseCase,
     GetBookingsByUserUseCase,
+    GetBookingByIdUseCase,
   ],
 })
 export class BookingModule {}

@@ -2,32 +2,9 @@ import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { BOOKING_REPOSITORY } from '@domain/repository/booking.repository';
 import type { IBookingRepository } from '@domain/repository/booking.repository';
 
-type UpdateBookingExecuteCommand = {
-  id: string;
-  input: {
-    title: string;
-    startsAt: Date | string;
-    endsAt: Date | string;
-    userId: string;
-  };
-};
-
 @Injectable()
 export class UpdateBookingUseCase {
   constructor(@Inject(BOOKING_REPOSITORY) private repo: IBookingRepository) {}
-
-  async execute(cmd: UpdateBookingExecuteCommand) {
-    const { id, input } = cmd;
-    const startAt = this.toDateString(input.startsAt);
-    const endAt = this.toDateString(input.endsAt);
-
-    return this.update(id, {
-      title: input.title,
-      startAt,
-      endAt,
-      userId: input.userId,
-    });
-  }
 
   async update(
     id: string,
@@ -62,9 +39,5 @@ export class UpdateBookingUseCase {
       startsAt: start,
       endsAt: end,
     });
-  }
-
-  private toDateString(v: Date | string): string {
-    return v instanceof Date ? v.toISOString() : v;
   }
 }

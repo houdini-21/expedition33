@@ -1,22 +1,31 @@
-import { Inject, Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
+import { CancelBookingCommand } from '../dto/commands/cancel-booking.command';
 import { BOOKING_REPOSITORY } from '@domain/repository/booking.repository';
 import type { IBookingRepository } from '@domain/repository/booking.repository';
 
 @Injectable()
 export class CancelBookingUseCase {
-  constructor(@Inject(BOOKING_REPOSITORY) private repo: IBookingRepository) {}
+  constructor(
+    @Inject(BOOKING_REPOSITORY) private readonly repo: IBookingRepository,
+  ) {}
 
-  async cancel(id: string, userId: string) {
+  async execute(cmd: CancelBookingCommand): Promise<void> {
+    const {
+      id,
+      input: { userId },
+    } = cmd;
     const booking = await this.repo.getById(id);
-
-    if (!booking) throw new BadRequestException('Booking not found');
-
-    if (booking.userId !== userId)
-      throw new BadRequestException('You can only cancel your own bookings');
-
+    if (!booking) throw new NotFoundException('Booking not found');
+    if (booking.userId !== userId) throw new ForbiddenException('Not allowed');
     if (booking.statusId === 2)
-      throw new BadRequestException('Booking is already cancelled');
+      throw new BadRequestException('Already cancelled');
 
-    return this.repo.update(id, { statusId: 2 });
+    await this.repo.update(id, { statusId: 2 });
   }
 }

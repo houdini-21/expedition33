@@ -88,6 +88,11 @@ export class BookingPrismaRepository implements IBookingRepository {
         ...(statusId ? { statusId } : {}),
       },
       orderBy: { startsAt: 'asc' },
+      include: {
+        user: {
+          select: { id: true, name: true, email: true, image: true },
+        },
+      },
     });
 
     return rows.map(
@@ -101,6 +106,7 @@ export class BookingPrismaRepository implements IBookingRepository {
           r.statusId,
           r.createdAt,
           r.updatedAt,
+          r.user,
         ),
     );
   }
