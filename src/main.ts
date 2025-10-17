@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { GlobalValidationPipe } from './common/pipes/validation.pipe';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
 const config = new DocumentBuilder()
@@ -17,7 +18,11 @@ async function bootstrap() {
   app.useGlobalPipes(GlobalValidationPipe);
   app.useGlobalFilters(new HttpExceptionFilter());
   app.use(helmet());
-  app.enableCors();
+  app.use(cookieParser());
+  app.enableCors({
+    origin: [process.env.FRONTEND_URL || 'http://localhost:3000'],
+    credentials: true,
+  });
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
