@@ -52,8 +52,20 @@ export class UserPrismaRepository implements IAccountRepository {
     refreshToken?: string;
     expiresAt?: Date;
   }): Promise<any> {
-    const createdUser = await this.prisma.user.create({
-      data: {
+    const createdUser = await this.prisma.user.upsert({
+      where: { email: profile.email },
+      update: {
+        accounts: {
+          create: {
+            provider: 'google',
+            providerAccountId: profile.providerAccountId,
+            accessToken: profile.accessToken,
+            refreshToken: profile.refreshToken,
+            expiresAt: profile.expiresAt,
+          },
+        },
+      },
+      create: {
         email: profile.email,
         name: profile.name,
         image: profile.image,
