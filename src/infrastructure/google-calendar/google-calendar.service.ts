@@ -76,14 +76,11 @@ export class GoogleCalendarService implements IGoogleCalendarPort {
     return this.accounts.isGoogleConnected(userId);
   }
 
-  // ---------- NUEVO: util para setear credenciales del usuario ----------
   private async authFor(userId: string): Promise<Auth.OAuth2Client> {
     const oauth = this.getOauthClient();
     const creds = await this.accounts.getGoogleTokens(userId);
     if (!creds?.refreshToken) {
-      // estrictos para el test (si no está conectado, bloquea creación)
       throw new UnauthorizedException('Google Calendar not connected');
-      // si quieres permitir creación sin calendar, devuelve this.oauth sin creds y hasBusy() -> false
     }
 
     oauth.setCredentials({

@@ -11,7 +11,6 @@ export function toCreateCommand(
   dto: CreateBookingDto,
   userId: string,
 ): CreateBookingCommand {
-  // tolera tanto startsAt/endsAt como startAt/endAt
   const startsAtStr = (dto as any).startsAt ?? (dto as any).startAt;
   const endsAtStr = (dto as any).endsAt ?? (dto as any).endAt;
   return {

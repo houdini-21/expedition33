@@ -13,6 +13,7 @@ import { GOOGLE_CALENDAR_PORT } from '@app/ports/google-calendar.port';
 import type { IGoogleCalendarPort } from '@app/ports/google-calendar.port';
 import { ok } from '@common/http/response.types';
 import type { Request, Response } from 'express';
+import { ApiOperation } from '@nestjs/swagger';
 
 type AuthedRequest = Request & { user: { userId: string } };
 
@@ -24,11 +25,13 @@ export class GoogleCalendarController {
   ) {}
 
   @Get()
+  @ApiOperation({ summary: 'Health check for Google Calendar integration' })
   ok() {
     return ok({ status: 'Google Calendar integration service is running' });
   }
   @UseGuards(AuthGuard('jwt'))
   @Get('oauth-url')
+  @ApiOperation({ summary: 'Get Google OAuth URL' })
   oauthUrl(@Req() req: AuthedRequest) {
     const userId = req.user.userId;
     if (!userId) throw new BadRequestException('Usuario no autenticado');
@@ -37,6 +40,7 @@ export class GoogleCalendarController {
   }
 
   @Get('callback')
+  @ApiOperation({ summary: 'Google OAuth Callback' })
   async callback(
     @Query('code') code: string,
     @Query('state') stateUserId: string,
@@ -48,6 +52,7 @@ export class GoogleCalendarController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({ summary: 'Get Google Calendar connection status' })
   @Get('status')
   async status(@Req() req: AuthedRequest) {
     const userId = req.user.userId;
