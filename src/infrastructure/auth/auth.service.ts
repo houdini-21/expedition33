@@ -22,7 +22,6 @@ export class AuthService {
       'google',
       googleUser.providerAccountId,
     );
-    console.log('Google Callback User:', user);
 
     if (!user) {
       user = await this.users.createFromGoogleProfile({

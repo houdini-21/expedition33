@@ -5,6 +5,7 @@ export interface IBookingRepository {
    * Return true if there is an overlap with [startsAt, endsAt)
    */
   findOverlaps(
+    userId: string,
     startsAt: Date,
     endsAt: Date,
     opts?: { excludeId?: string },

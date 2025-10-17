@@ -13,7 +13,7 @@ export class CreateBookingUseCase {
     const { userId, title, startsAt, endsAt } = cmd.input;
     if (startsAt >= endsAt) throw new BadRequestException('InvalidTimeRange');
 
-    const overlap = await this.repo.findOverlaps(startsAt, endsAt);
+    const overlap = await this.repo.findOverlaps(userId, startsAt, endsAt);
     if (overlap) throw new BadRequestException('Time slot already taken');
 
     const created = await this.repo.create({

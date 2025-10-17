@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@infra/persistence/prisma/prisma.service';
 import { Booking } from '@domain/entities/booking.entity';
 import { IBookingRepository } from '@domain/repository/booking.repository';
+
 @Injectable()
 export class BookingPrismaRepository implements IBookingRepository {
   constructor(private readonly prisma: PrismaService) {}
@@ -10,11 +11,13 @@ export class BookingPrismaRepository implements IBookingRepository {
    * Check if there are any bookings that overlap with the given time range.
    */
   async findOverlaps(
+    userId: string,
     startsAt: Date,
     endsAt: Date,
     opts?: { excludeId?: string },
   ): Promise<boolean> {
     const where = {
+      userId,
       AND: [{ startsAt: { lt: endsAt } }, { endsAt: { gt: startsAt } }],
       ...(opts?.excludeId ? { id: { not: opts.excludeId } } : {}),
     };

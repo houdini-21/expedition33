@@ -43,7 +43,7 @@ export class UpdateBookingUseCase {
     if (start >= end)
       throw new BadRequestException('startAt must be before endAt');
 
-    const overlaps = await this.repo.findOverlaps(start, end, {
+    const overlaps = await this.repo.findOverlaps(input.userId, start, end, {
       excludeId: id,
     });
     if (overlaps) throw new BadRequestException('Time slot already taken');
