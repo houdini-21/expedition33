@@ -35,9 +35,14 @@ The project follows **Hexagonal Architecture** with the following layers:
 
 ## 🚀 Main Endpoints
 
+### 🌐 Root & Health
+
+- `GET /` → Returns API root or version info.
+- `GET /health` → Health check endpoint to verify server status.
+
 ### 📅 Bookings
 
-- `GET /bookings` → Returns all bookings for the authenticated user (with user info).
+- `GET /bookings` → Returns all bookings for the authenticated user.
 - `GET /bookings/:id` → Returns details of a specific booking.
 - `POST /bookings` → Creates a new booking (validates range and overlaps).
 - `PATCH /bookings/:id` → Updates an existing booking.
@@ -48,10 +53,11 @@ The project follows **Hexagonal Architecture** with the following layers:
 - `GET /auth/google` → Redirects to Google OAuth2.
 - `GET /auth/google/callback` → Handles Google callback and validates user.
 - `GET /auth/me` → Returns authenticated user profile.
+- `GET /auth/logout` → Clears session cookie and invalidates JWT.
 
 ### 📅 Google Calendar Integration
 
-- `GET /integrations/google` → Entry point for Google integrations.
+- `GET /integrations/google` → Health check for Google Calendar integration.
 - `GET /integrations/google/oauth-url` → Returns the Google OAuth consent URL.
 - `GET /integrations/google/callback` → Handles Google OAuth2 callback (token exchange).
 - `GET /integrations/google/status` → Checks current Google Calendar connection status.
