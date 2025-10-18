@@ -14,7 +14,7 @@ type User = {
   id: string;
   name: string;
   email: string;
-  picture?: string;
+  image?: string;
 };
 
 type AuthContextType = {
@@ -22,6 +22,12 @@ type AuthContextType = {
   loading: boolean;
   logout: () => Promise<void>;
   refetchUser: () => Promise<void>;
+};
+
+type ApiResponse<T> = {
+  code: number;
+  message: string;
+  data: T;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -38,8 +44,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUser = useCallback(async () => {
     try {
-      const { user } = await http<{ user: User }>(routes.auth.me);
-      setUser(user);
+      const {
+        data: { user: fetchedUser },
+      } = await http<ApiResponse<{ user: User }>>(routes.auth.me);
+      console.log("Fetched user:", fetchedUser);
+      setUser(fetchedUser);
     } catch {
       setUser(null);
     } finally {
@@ -56,18 +65,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       router.push("/login");
     } catch (err) {
-      console.error("Error al cerrar sesión", err);
+      console.error("Logout failed:", err);
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        logout,
-        refetchUser: fetchUser,
-      }}
+      value={{ user, loading, logout, refetchUser: fetchUser }}
     >
       {children}
     </AuthContext.Provider>

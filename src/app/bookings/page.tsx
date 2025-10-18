@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import ConnectGoogleButton from "./ConnectGoogleButton";
+import TopBar from "./TopBar";
 
 const BookingsCalendar = dynamic(() => import("./BookingsCalendar"), {
   ssr: true,
@@ -7,7 +8,8 @@ const BookingsCalendar = dynamic(() => import("./BookingsCalendar"), {
 
 export default function BookingsPage() {
   return (
-    <div className="p-6">
+    <>
+      <TopBar />
       <div className="p-6">
         <header className="flex items-center justify-between mb-6">
           <div>
@@ -19,6 +21,6 @@ export default function BookingsPage() {
 
         <BookingsCalendar />
       </div>
-    </div>
+    </>
   );
 }
