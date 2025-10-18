@@ -31,7 +31,7 @@ COPY --from=builder /app/package.json ./package.json
 EXPOSE 4000
 
 CMD sh -c '\
-  npx prisma migrate deploy && \
+  npx prisma migrate deploy && npm run prisma:seed && \
   if [ -f dist/main.js ]; then node dist/main.js; \
   elif [ -f dist/src/main.js ]; then node dist/src/main.js; \
   elif [ -f dist/apps/api/main.js ]; then node dist/apps/api/main.js; \

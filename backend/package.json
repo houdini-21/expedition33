@@ -18,7 +18,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prepare": "husky",
     "lint": "eslint . --ext .ts --max-warnings=0",
-    "format": "prettier --write \"src/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "prisma:seed": "tsx prisma/seed/seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
