@@ -15,7 +15,7 @@ services:
       retries: 5
 
   api:
-    image: ghcr.io/OWNER/REPO/backend:${IMAGE_TAG:-latest}
+    image: ghcr.io/houdini-21/expedition33/backend:${IMAGE_TAG:-latest}
     container_name: backend-api
     env_file:
       - ./backend.env
@@ -33,7 +33,7 @@ services:
       retries: 5
 
   web:
-    image: ghcr.io/OWNER/REPO/frontend:${IMAGE_TAG:-latest} 
+    image: ghcr.io/houdini-21/expedition33/frontend:${IMAGE_TAG:-latest}
     container_name: frontend-web
     env_file:
       - ./frontend.env
