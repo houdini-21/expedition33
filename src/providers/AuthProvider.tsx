@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { http } from "@/api/http";
+import { routes } from "@/api/routes";
 
 type User = {
   id: string;
@@ -37,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUser = useCallback(async () => {
     try {
-      const { user } = await http<{ user: User }>("/me");
+      const { user } = await http<{ user: User }>(routes.auth.me);
       setUser(user);
     } catch {
       setUser(null);
@@ -52,9 +53,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      await http("/auth/logout", { method: "POST" });
       setUser(null);
-      router.push("/login"); 
+      router.push("/login");
     } catch (err) {
       console.error("Error al cerrar sesión", err);
     }
