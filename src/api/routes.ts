@@ -15,5 +15,6 @@ export const routes = {
   integrations: {
     googleOAuthUrl: "/integrations/google/oauth-url",
     googleConnect: "/integrations/google",
+    googleCalendarStatus: "/integrations/google/status",
   },
 } as const;
