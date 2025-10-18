@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+.calendar-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  padding: 1rem;
+}
+
+.nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 9999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 18px;
+  display: grid;
+  place-items: center;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.nav-btn:hover {
+  background: #f3f4f6;
+}
+.nav-btn:active {
+  transform: translateY(1px);
+}
+
+.rbc-time-view,
+.rbc-agenda-view,
+.rbc-month-view {
+  border: 0 !important;
+}
+.rbc-time-header,
+.rbc-time-content,
+.rbc-month-view,
+.rbc-agenda-view {
+  border: 0 !important;
+}
+.rbc-time-header-content,
+.rbc-time-content > * + * {
+  border-left: 0 !important;
+}
+.rbc-time-gutter .rbc-timeslot-group {
+  border-color: #eef2f7 !important;
+}
+.rbc-time-content > .rbc-day-slot .rbc-time-slot {
+  border-color: #eef2f7 !important;
+}
+.rbc-time-header-gutter,
+.rbc-time-content .rbc-time-gutter {
+  border-right: 0 !important;
+}
+.rbc-time-slot {
+  height: 60px;
+}
+.rbc-time-gutter .rbc-time-slot {
+  color: #6b7280;
+  font-weight: 600;
+}
+.rbc-today {
+  background: #f0f9ff;
+}
+
+.rbc-button-link {
+  color: #374151 !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+}
+
+.rbc-event-reset .rbc-event-label {
+  display: none !important;
+}
+
+.rbc-event-reset .rbc-event-content {
+  padding: 0 !important;
+}
+
+.rbc-event-reset {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+.rbc-day-slot .rbc-event {
+  margin: 2px 4px !important;
+}
+
+.rbc-event-overlaps {
+  box-shadow: none !important;
+}
+
+.rbc-header {
+  padding-bottom: 15px !important;
+  padding-top: 15px !important;
+}
+
+.rbc-allday-cell {
+  display: none !important;
+}
+.rbc-event-label {
+  display: none !important;
+}
+
+.rbc-day-slot .rbc-event,
+.rbc-day-slot .rbc-background-event {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.rbc-event:focus,
+.rbc-day-slot .rbc-background-event:focus {
+  outline: none !important;
+}
