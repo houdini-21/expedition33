@@ -159,4 +159,10 @@ export class UserPrismaRepository implements IAccountRepository {
       expiresAt: acc.expiresAt ?? null,
     };
   }
+
+  async findById(userId: string) {
+    return this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+  }
 }

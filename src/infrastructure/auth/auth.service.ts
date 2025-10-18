@@ -42,4 +42,8 @@ export class AuthService {
 
     return { access_token: this.jwt.sign(payload) };
   }
+
+  me(userId: string) {
+    return this.users.findById(userId);
+  }
 }

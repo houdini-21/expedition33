@@ -49,4 +49,13 @@ export class AuthController {
       process.env.FRONTEND_PUBLIC_URL || 'http://localhost:3000';
     res.redirect(`${baseFront}/bookings`);
   }
+
+  @Get('me')
+  @UseGuards(AuthGuard('jwt'))
+  async me(@Req() req: any) {
+    const user = await this.auth.me(req.user.userId);
+    if (!user) throw new UnauthorizedException('No user found');
+
+    return ok({ user });
+  }
 }
