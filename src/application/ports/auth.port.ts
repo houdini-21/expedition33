@@ -34,5 +34,7 @@ export interface IAuthPort {
   me(userId: string): Promise<unknown>;
 
   setSessionCookie(res: Response, token: string): void;
+
+  logout(res: Response): void;
   readonly postLoginRedirect: string;
 }

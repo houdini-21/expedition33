@@ -50,14 +50,12 @@ export class AuthService implements IAuthPort {
     return this.users.findById(userId);
   }
 
-  /** 👉 política de redirect post-login, centralizada en infra */
   get postLoginRedirect(): string {
     const baseFront =
       process.env.FRONTEND_PUBLIC_URL || 'http://localhost:3000';
     return `${baseFront}/bookings`;
   }
 
-  /** 👉 seteo de cookie httpOnly, centralizado en infra (testable) */
   setSessionCookie(res: Response, token: string): void {
     if (!token) throw new UnauthorizedException('Token generation failed');
 
@@ -75,5 +73,16 @@ export class AuthService implements IAuthPort {
         ? { domain: process.env.SESSION_COOKIE_DOMAIN }
         : {}),
     });
+  }
+
+  logout(res: Response): void {
+    const cookieName = process.env.SESSION_COOKIE_NAME || 'jwt';
+    const options = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
+    };
+    res.clearCookie(cookieName, options);
   }
 }

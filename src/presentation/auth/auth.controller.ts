@@ -5,6 +5,7 @@ import { UnauthorizedException } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import type { Response } from 'express';
 import { LoginWithGoogleCallbackUseCase } from '@app/use-cases/login-with-google-callback.usecase';
+import { LogoutUseCase } from '@app/use-cases/logout.usecase';
 import { GetMeUseCase } from '@app/use-cases/get-me.usecase';
 
 @Controller('auth')
@@ -12,6 +13,7 @@ export class AuthController {
   constructor(
     private readonly loginWithGoogleCallback: LoginWithGoogleCallbackUseCase,
     private readonly getMeUc: GetMeUseCase,
+    private readonly logoutUc: LogoutUseCase,
   ) {}
 
   @Get('google')
@@ -40,5 +42,11 @@ export class AuthController {
     const { user } = await this.getMeUc.execute({ userId: req.user.userId });
     if (!user) throw new UnauthorizedException('No user found');
     return ok({ user });
+  }
+
+  @Get('logout')
+  @UseGuards(AuthGuard('jwt'))
+  logout(@Res({ passthrough: true }) res: Response) {
+    return this.logoutUc.execute({ res });
   }
 }
