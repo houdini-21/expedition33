@@ -9,4 +9,8 @@ export const routes = {
     create: "/bookings",
     cancel: (id: string) => `/bookings/${id}/cancel`,
   },
+  integrations: {
+    googleOAuthUrl: "/integrations/google/oauth-url",
+    googleConnect: "/integrations/google",
+  },
 } as const;

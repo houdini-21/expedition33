@@ -12,3 +12,7 @@ export interface ApiResponse<T> {
   /** Main payload returned by the API */
   data: T;
 }
+
+export interface OAuthUrlPayload {
+  url: string;
+}
