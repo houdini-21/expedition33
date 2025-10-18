@@ -11,18 +11,14 @@ export default function BookingsPage() {
       <div className="p-6">
         <header className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Bookings</h1>
-            <p className="text-gray-500 text-sm">
-              Manage and sync your bookings
-            </p>
+            <h1 className="text-2xl font-bold text-gray-600">Bookings</h1>
+            <p className="text-gray-500 text-sm">Manage your bookings</p>
           </div>
           <ConnectGoogleButton />
         </header>
 
         <BookingsCalendar />
       </div>
-
-      <BookingsCalendar />
     </div>
   );
 }

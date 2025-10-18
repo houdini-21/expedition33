@@ -66,8 +66,8 @@ export default function BookingCreatePanel({
       aria-hidden={!draft}
     >
       <div className="mb-6">
-        <h3 className="text-sm text-gray-500">Create booking</h3>
-        <p className="text-xs text-gray-500">
+        <h3 className="text-md text-gray-700 font-bold">Create booking</h3>
+        <p className="text-sm text-gray-700">
           {draft ? dateLabel : "Select a slot in the calendar"}
         </p>
       </div>
@@ -118,7 +118,7 @@ export default function BookingCreatePanel({
       <div className="mt-6 flex gap-3">
         <button
           className={classNames(
-            "flex-1 h-11 rounded-lg font-semibold text-white",
+            "flex-1 h-11 rounded-lg font-semibold text-white cursor-pointer transition-colors",
             canSave ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300"
           )}
           disabled={!canSave}
@@ -138,7 +138,7 @@ export default function BookingCreatePanel({
         </button>
 
         <button
-          className="h-11 px-4 rounded-lg font-medium border border-gray-300 hover:bg-gray-50"
+          className="h-11 px-4 rounded-lg font-medium border border-gray-300 hover:bg-gray-50 cursor-pointer"
           onClick={onClose}
           disabled={disabled}
         >

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { http } from "@/api/http";
 import { routes } from "@/api/routes";
 import type { ApiResponse, OAuthUrlPayload } from "@/types/api";
+import { toast } from "react-toastify";
 
 export default function ConnectGoogleButton() {
   const router = useRouter();
@@ -21,7 +22,9 @@ export default function ConnectGoogleButton() {
       router.push(url);
     } catch (err) {
       console.error(err);
-      alert("Could not start Google connection. Please try again.");
+      toast.error(
+        "Failed to initiate Google Calendar connection. Please try again."
+      );
     }
   };
 
@@ -29,14 +32,14 @@ export default function ConnectGoogleButton() {
     <button
       type="button"
       onClick={handleConnect}
-      className="inline-flex items-center gap-2 rounded-lg bg-white border border-gray-300 px-4 py-2 font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-60"
+      className="inline-flex items-center gap-2 rounded-lg bg-white border border-gray-300 px-4 py-2 font-medium text-gray-700 shadow-sm hover:bg-gray-50 disabled:opacity-60 cursor-pointer"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         aria-label="Google Calendar"
         role="img"
         viewBox="0 0 512 512"
-        className="w-12 h-12"
+        className="w-10 h-10"
       >
         <rect width="512" height="512" rx="15%" fill="#ffffff" />
         <path d="M100 340h74V174H340v-74H137Q100 100 100 135" fill="#4285f4" />

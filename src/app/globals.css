@@ -92,6 +92,7 @@
 
 .rbc-header {
   padding-bottom: 15px !important;
+  padding-top: 15px !important;
 }
 
 .rbc-allday-cell {
@@ -101,11 +102,13 @@
   display: none !important;
 }
 
-.rbc-day-slot .rbc-event, .rbc-day-slot .rbc-background-event {
+.rbc-day-slot .rbc-event,
+.rbc-day-slot .rbc-background-event {
   background-color: transparent !important;
   border: none !important;
 }
 
-.rbc-event:focus, .rbc-day-slot .rbc-background-event:focus {
+.rbc-event:focus,
+.rbc-day-slot .rbc-background-event:focus {
   outline: none !important;
 }

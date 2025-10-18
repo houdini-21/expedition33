@@ -68,56 +68,54 @@ export default function BookingsCalendar() {
 
   return (
     <>
-      <div className="p-6">
-        <div
-          className={classNames(
-            "grid gap-6 transition-all duration-300",
-            draft ? "lg:grid-cols-[1fr_360px]" : "lg:grid-cols-1"
-          )}
-        >
-          {/* Calendar */}
-          <div className="calendar-card">
-            <Calendar<EventType>
-              ref={calRef as React.Ref<Calendar<EventType>>}
-              localizer={localizer}
-              events={events}
-              defaultDate={new Date()}
-              defaultView={Views.WEEK}
-              views={[Views.WEEK]}
-              startAccessor="startsAt"
-              endAccessor="endsAt"
-              style={{ height: "calc(100vh - 220px)" }}
-              components={components}
-              step={60}
-              timeslots={1}
-              min={new Date(1970, 1, 1, 7, 0, 0)}
-              max={new Date(1970, 1, 1, 18, 59, 0)}
-              onRangeChange={onRangeChange}
-              selectable
-              onSelectSlot={handleSelectSlot}
-              onSelectEvent={async (e) => {
-                console.log(e);
-                if (e.status === "cancelled") return;
-                const ok = confirm(`Delete "${e.title}"?`);
-                if (!ok) return;
-                await cancelBooking(e.id as string);
-              }}
-              messages={calendarMessages}
-              formats={calendarFormats}
-              eventPropGetter={eventPropGetter}
-            />
-          </div>
+      <div
+        className={classNames(
+          "grid gap-6 transition-all duration-300",
+          draft ? "lg:grid-cols-[1fr_360px]" : "lg:grid-cols-1"
+        )}
+      >
+        {/* Calendar */}
+        <div className="calendar-card">
+          <Calendar<EventType>
+            ref={calRef as React.Ref<Calendar<EventType>>}
+            localizer={localizer}
+            events={events}
+            defaultDate={new Date()}
+            defaultView={Views.WEEK}
+            views={[Views.WEEK]}
+            startAccessor="startsAt"
+            endAccessor="endsAt"
+            style={{ height: "calc(100vh - 220px)" }}
+            components={components}
+            step={60}
+            timeslots={1}
+            min={new Date(1970, 1, 1, 7, 0, 0)}
+            max={new Date(1970, 1, 1, 18, 59, 0)}
+            onRangeChange={onRangeChange}
+            selectable
+            onSelectSlot={handleSelectSlot}
+            onSelectEvent={async (e) => {
+              console.log(e);
+              if (e.status === "cancelled") return;
+              const ok = confirm(`Delete "${e.title}"?`);
+              if (!ok) return;
+              await cancelBooking(e.id as string);
+            }}
+            messages={calendarMessages}
+            formats={calendarFormats}
+            eventPropGetter={eventPropGetter}
+          />
+        </div>
 
-          <div className={classNames("", draft ? "block" : "hidden")}>
-            <BookingCreatePanel
-              draft={draft}
-              disabled={isSaving}
-              onClose={() => setDraft(null)}
-              onCreate={async (payload) => {
-                await createBooking(payload);
-              }}
-            />
-          </div>
+        <div className={classNames("", draft ? "block" : "hidden")}>
+          <BookingCreatePanel
+            draft={draft}
+            disabled={isSaving}
+            onClose={() => setDraft(null)}
+            onCreate={async (payload) => {
+              await createBooking(payload);
+            }}
+          />
         </div>
       </div>
     </>

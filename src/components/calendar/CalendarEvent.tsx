@@ -1,5 +1,3 @@
-"use client";
-
 import { format } from "date-fns";
 import classNames from "classnames";
 import { CalendarEventProps, Status } from "@/types/bookings";
