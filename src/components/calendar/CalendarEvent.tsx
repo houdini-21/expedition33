@@ -30,12 +30,11 @@ export default function CalendarEvent({ event }: CalendarEventProps) {
 
   return (
     <div
-      className={[
+      className={classNames(
         "h-full w-full rounded-xl border px-3 py-2 shadow-sm transition-all",
         ui.card,
-        ui.border,
-      ].join(" ")}
-      title={`${event.title} · ${start}–${end}`}
+        ui.border
+      )}
     >
       <div className="flex items-start gap-2">
         <span className="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-current opacity-40" />
@@ -49,7 +48,7 @@ export default function CalendarEvent({ event }: CalendarEventProps) {
           >
             {event.title}
           </div>
-          <div className={["mt-1 text-sm font-medium", ui.time].join(" ")}>
+          <div className={classNames("mt-1 text-sm font-medium", ui.time)}>
             {start} – {end}
           </div>
         </div>

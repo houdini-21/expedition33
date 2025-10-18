@@ -15,74 +15,79 @@ export function useBookings() {
   const calRef = useRef<RbcCalendarRef>(null);
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [title, setTitle] = useState<string>("");
+  const [draft, setDraft] = useState<CalendarEvent | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const mapServer = (b: ServerBooking): CalendarEvent => ({
+    id: b.id,
+    title: b.title,
+    startsAt: new Date(b.startsAt),
+    endsAt: new Date(b.endsAt),
+    status: b.status,
+  });
 
   const fetchByRange = useCallback(async (start: Date, end: Date) => {
     const qs = new URLSearchParams({
       startsAt: start.toISOString(),
       endsAt: end.toISOString(),
     });
-
     const res = await http<ApiResponse<ServerBooking[]>>(
       `${routes.booking.list}?${qs.toString()}`
     );
-
-    setEvents(
-      res.data.map((b: ServerBooking): CalendarEvent => ({
-      id: b.id,
-      title: b.title,
-      startsAt: new Date(b.startsAt),
-      endsAt: new Date(b.endsAt),
-      status: b.status,
-      }))
-    );
+    setEvents(res.data.map(mapServer));
     setTitle(rangeToTitle(start, end));
   }, []);
 
   const refreshCurrentWeek = useCallback(() => {
     const api: RbcCalendarRef = calRef.current;
     const dateProp = api?.props?.date;
-    const baseDate: Date = dateProp
-      ? typeof dateProp === "string"
-        ? new Date(dateProp)
-        : dateProp
-      : new Date();
+    const baseDate: Date =
+      dateProp && typeof dateProp !== "string" ? dateProp : new Date();
     const refStart = startOfWeek(baseDate, { weekStartsOn: 1 });
     const refEnd = new Date(refStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
     fetchByRange(refStart, refEnd);
   }, [fetchByRange]);
 
   const createBooking = useCallback(
-    async (title: string, start: Date, end?: Date) => {
-      await http(routes.booking.create, {
-        method: "POST",
-        body: JSON.stringify({
-          title,
-          startAt: start.toISOString(),
-          endAt: (
-            end ?? new Date(start.getTime() + 60 * 60 * 1000)
-          ).toISOString(),
-        }),
-      });
-      refreshCurrentWeek();
+    async (payload: { title: string; startsAt: Date; endsAt: Date }) => {
+      setIsSaving(true);
+      try {
+        await http(routes.booking.create, {
+          method: "POST",
+          body: JSON.stringify({
+            title: payload.title,
+            startAt: payload.startsAt.toISOString(),
+            endAt: payload.endsAt.toISOString(),
+          }),
+        });
+        setDraft(null);
+        refreshCurrentWeek();
+      } finally {
+        setIsSaving(false);
+      }
     },
     [refreshCurrentWeek]
   );
 
   const cancelBooking = useCallback(
     async (id: string) => {
-      await http(routes.booking.cancel(id), { method: "DELETE" });
-      refreshCurrentWeek();
+      setIsSaving(true);
+      try {
+        await http(routes.booking.cancel(id), { method: "PATCH" });
+        refreshCurrentWeek();
+      } finally {
+        setIsSaving(false);
+      }
     },
     [refreshCurrentWeek]
   );
 
   const onRangeChange = useCallback(
     (range: Date[] | { start: Date; end: Date }) => {
-      if (Array.isArray(range) && range.length >= 2) {
+      if (Array.isArray(range) && range.length >= 2)
         fetchByRange(range[0], range[range.length - 1]);
-      } else if (!Array.isArray(range) && range.start && range.end) {
+      else if (!Array.isArray(range) && range.start && range.end)
         fetchByRange(range.start, range.end);
-      }
     },
     [fetchByRange]
   );
@@ -91,10 +96,13 @@ export function useBookings() {
     calRef,
     events,
     title,
+    draft,
+    setDraft,
+    isSaving,
     fetchByRange,
+    refreshCurrentWeek,
     createBooking,
     cancelBooking,
     onRangeChange,
-    refreshCurrentWeek,
   };
 }

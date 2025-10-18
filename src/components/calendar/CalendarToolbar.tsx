@@ -21,14 +21,14 @@ export default function CalendarToolbar({
           className="nav-btn"
           aria-label="Previous"
         >
-          ‹
+          &lsaquo;
         </button>
         <button
           onClick={() => onNavigate("NEXT")}
           className="nav-btn"
           aria-label="Next"
         >
-          ›
+          &rsaquo;
         </button>
       </div>
     </div>

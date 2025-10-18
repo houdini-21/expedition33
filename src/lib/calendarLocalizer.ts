@@ -6,5 +6,5 @@ export const localizer = dateFnsLocalizer({
   parse,
   startOfWeek,
   getDay,
-  locales: {}, // no locales at all (pure English)
+  locales: {},
 });

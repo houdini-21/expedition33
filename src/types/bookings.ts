@@ -1,4 +1,8 @@
-import type { EventProps, ToolbarProps, NavigateAction } from "react-big-calendar";
+import type {
+  EventProps,
+  ToolbarProps,
+  NavigateAction,
+} from "react-big-calendar";
 
 export type Status = "active" | "cancelled";
 
@@ -18,7 +22,6 @@ export interface CalendarEvent {
   status: Status;
 }
 
-// Props for the Calendar toolbar
 export interface CalendarToolbarProps extends ToolbarProps<CalendarEvent> {
   titleText: string;
   label: string;
@@ -26,5 +29,4 @@ export interface CalendarToolbarProps extends ToolbarProps<CalendarEvent> {
   onNavigate: (navigate: NavigateAction, date?: Date) => void;
 }
 
-// Props for the custom Event renderer
 export type CalendarEventProps = EventProps<CalendarEvent>;
