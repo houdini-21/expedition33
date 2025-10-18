@@ -9,6 +9,6 @@ export async function http<T>(path: string, init: RequestInit = {}): Promise<T> 
       ...(init.headers || {}),
     },
   });
-  if (!res.ok) throw new Error(await res.text());
+  if (!res.ok) return Promise.reject(await res.json());
   return res.json() as Promise<T>;
 }

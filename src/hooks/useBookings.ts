@@ -8,6 +8,7 @@ import { http } from "@/api/http";
 import { routes } from "@/api/routes";
 import { rangeToTitle } from "@/lib/calendarFormats";
 import type { CalendarEvent, ServerBooking } from "@/types/bookings";
+import { toast } from "react-toastify";
 
 type RbcCalendarRef = Calendar<CalendarEvent> | null;
 
@@ -62,6 +63,9 @@ export function useBookings() {
         });
         setDraft(null);
         refreshCurrentWeek();
+        toast.success("Booking created successfully");
+      } catch (error: unknown) {
+        toast.error((error as Error)?.message || "Failed to create booking");
       } finally {
         setIsSaving(false);
       }
@@ -75,8 +79,11 @@ export function useBookings() {
       try {
         await http(routes.booking.cancel(id), { method: "PATCH" });
         refreshCurrentWeek();
+      } catch (error: unknown) {
+        toast.error((error as Error)?.message || "Failed to create booking");
       } finally {
         setIsSaving(false);
+        toast.success("Booking cancelled successfully");
       }
     },
     [refreshCurrentWeek]
