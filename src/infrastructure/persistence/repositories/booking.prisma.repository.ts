@@ -20,6 +20,7 @@ export class BookingPrismaRepository implements IBookingRepository {
       userId,
       AND: [{ startsAt: { lt: endsAt } }, { endsAt: { gt: startsAt } }],
       ...(opts?.excludeId ? { id: { not: opts.excludeId } } : {}),
+      statusId: 1,
     };
 
     const found = await this.prisma.booking.findFirst({
