@@ -32,7 +32,7 @@ export default function GoogleLoginButton() {
           fill="#EA4335"
         />
       </svg>
-      <span className="truncate">Iniciar sesión con Google</span>
+      <span className="truncate">Login with Google</span>
     </Link>
   );
 }

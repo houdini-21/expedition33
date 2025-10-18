@@ -5,6 +5,7 @@ export const routes = {
   auth: {
     login: "/auth/google",
     me: "/auth/me",
+    logout: "/auth/logout",
   },
   booking: {
     list: "/bookings",
