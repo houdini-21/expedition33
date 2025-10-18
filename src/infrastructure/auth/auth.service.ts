@@ -1,23 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import type { Response } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UserPrismaRepository } from '@infra/persistence/repositories/user.prisma.repository';
+import type {
+  GoogleAuthProfile,
+  IAuthPort,
+  MinimalUser,
+} from '@app/ports/auth.port';
 
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthPort {
   constructor(
     private users: UserPrismaRepository,
     private jwt: JwtService,
   ) {}
 
-  async validateGoogleUser(googleUser: {
-    provider: 'google';
-    providerAccountId: string;
-    email?: string;
-    name?: string;
-    image?: string;
-    accessToken?: string;
-    refreshToken?: string;
-  }) {
+  async validateGoogleUser(
+    googleUser: GoogleAuthProfile,
+  ): Promise<MinimalUser | null> {
     let user = await this.users.findByProviderId(
       'google',
       googleUser.providerAccountId,
@@ -37,13 +37,43 @@ export class AuthService {
     return user;
   }
 
-  login(user: { id: string; email?: string | null }) {
+  async login(user: {
+    id: string;
+    email?: string;
+  }): Promise<{ access_token: string }> {
     const payload = { sub: user.id, email: user.email ?? undefined };
-
-    return { access_token: this.jwt.sign(payload) };
+    const access_token = await this.jwt.signAsync(payload);
+    return { access_token };
   }
 
   me(userId: string) {
     return this.users.findById(userId);
+  }
+
+  /** 👉 política de redirect post-login, centralizada en infra */
+  get postLoginRedirect(): string {
+    const baseFront =
+      process.env.FRONTEND_PUBLIC_URL || 'http://localhost:3000';
+    return `${baseFront}/bookings`;
+  }
+
+  /** 👉 seteo de cookie httpOnly, centralizado en infra (testable) */
+  setSessionCookie(res: Response, token: string): void {
+    if (!token) throw new UnauthorizedException('Token generation failed');
+
+    const isProd = process.env.NODE_ENV === 'production';
+    const cookieName = process.env.SESSION_COOKIE_NAME || 'jwt';
+    const maxAge = Number(process.env.SESSION_COOKIE_MAX_AGE_MS || 86400000);
+
+    res.cookie(cookieName, token, {
+      httpOnly: true,
+      path: '/',
+      maxAge,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      ...(isProd && process.env.SESSION_COOKIE_DOMAIN
+        ? { domain: process.env.SESSION_COOKIE_DOMAIN }
+        : {}),
+    });
   }
 }

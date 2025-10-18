@@ -6,6 +6,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthService } from './auth.service';
 import { PrismaService } from '@infra/persistence/prisma/prisma.service';
 import { UserPrismaRepository } from '@infra/persistence/repositories/user.prisma.repository';
+import { AUTH_PORT } from '@app/ports/auth.port';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { UserPrismaRepository } from '@infra/persistence/repositories/user.prism
     AuthService,
     GoogleStrategy,
     JwtStrategy,
+    { provide: AUTH_PORT, useExisting: AuthService },
   ],
-  exports: [AuthService],
+  exports: [AUTH_PORT],
 })
 export class AuthModule {}

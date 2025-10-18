@@ -1,14 +1,18 @@
 import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from '@infra/auth/auth.service';
 import { ok } from '@common/http/response.types';
 import { UnauthorizedException } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import type { Response } from 'express';
+import { LoginWithGoogleCallbackUseCase } from '@app/use-cases/login-with-google-callback.usecase';
+import { GetMeUseCase } from '@app/use-cases/get-me.usecase';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private auth: AuthService) {}
+  constructor(
+    private readonly loginWithGoogleCallback: LoginWithGoogleCallbackUseCase,
+    private readonly getMeUc: GetMeUseCase,
+  ) {}
 
   @Get('google')
   @ApiOperation({ summary: 'Get Google OAuth URL' })
@@ -23,39 +27,18 @@ export class AuthController {
     @Req() req: any,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const user = await this.auth.validateGoogleUser(req.user);
-    if (!user) throw new UnauthorizedException('No user from google');
-
-    const lr = this.auth.login({ id: user.id, email: user.email });
-    const token = typeof lr === 'string' ? lr : lr?.access_token;
-    if (!token) throw new UnauthorizedException('Token generation failed');
-
-    const isProd = process.env.NODE_ENV === 'production';
-    const cookieName = process.env.SESSION_COOKIE_NAME || 'jwt';
-    const maxAge = Number(process.env.SESSION_COOKIE_MAX_AGE_MS || 86400000);
-
-    res.cookie(cookieName, token, {
-      httpOnly: true,
-      path: '/',
-      maxAge,
-      secure: isProd,
-      sameSite: isProd ? 'none' : 'lax',
-      ...(isProd && process.env.SESSION_COOKIE_DOMAIN
-        ? { domain: process.env.SESSION_COOKIE_DOMAIN }
-        : {}),
+    const { redirectTo } = await this.loginWithGoogleCallback.execute({
+      googleProfile: req.user,
+      res,
     });
-
-    const baseFront =
-      process.env.FRONTEND_PUBLIC_URL || 'http://localhost:3000';
-    res.redirect(`${baseFront}/bookings`);
+    res.redirect(redirectTo);
   }
 
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   async me(@Req() req: any) {
-    const user = await this.auth.me(req.user.userId);
+    const { user } = await this.getMeUc.execute({ userId: req.user.userId });
     if (!user) throw new UnauthorizedException('No user found');
-
     return ok({ user });
   }
 }
