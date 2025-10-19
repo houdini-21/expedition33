@@ -1,36 +1,107 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📖 Booking Service (Frontend)
 
-## Getting Started
+This project implements a **Booking Management System (Frontend)** using **Next.js 15 (App Router)**, designed to interact with a backend powered by **NestJS + Prisma (PostgreSQL)**.  
+The frontend follows a clean architecture approach, separating concerns between UI, business logic (hooks), and infrastructure (API services).
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📂 Project Structure
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The project follows a layered and modular organization:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **app/** 🎨  
+  Next.js App Router with routes for authentication and bookings.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **components/** 🧩  
+  Reusable UI components (calendar views, booking panels, authentication buttons).
 
-## Learn More
+- **hooks/** 🔄  
+  Business logic hooks (e.g., `useBookings`) to manage state, fetching, and user interactions.
 
-To learn more about Next.js, take a look at the following resources:
+- **providers/** 🌍  
+  Context providers for global state, like authentication.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **lib/** ⚙️  
+  Pure utility functions (calendar localizer, messages, and formatters).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **services/** 📡  
+  HTTP client wrapper (`fetch` with credentials) and centralized API routes.
 
-## Deploy on Vercel
+- **types/** 📝  
+  TypeScript DTOs and models (e.g., `ServerBooking`, `CalendarEvent`).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **middleware.ts** 🔐  
+  Middleware for session-based route protection.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🚀 Main Features
+
+- **Authentication**: Google OAuth login with session cookie support.  
+- **Booking Management**:  
+  - List bookings within a date range.  
+  - Create new bookings.  
+  - Update existing bookings.  
+  - Cancel bookings.  
+  - Prevent creating or moving events into the past.  
+- **Calendar UI**:  
+  - Interactive booking calendar built with `react-big-calendar`.  
+  - Custom event cards with status styling (active, cancelled).  
+  - Toolbar navigation and localization (formats/messages).  
+- **Booking Panel**: Side panel form for creating and editing bookings with the same UI design.  
+- **Protected Routes**: Middleware ensures only authenticated users can access bookings.  
+
+---
+
+## 🔌 API Endpoints Consumed
+
+The frontend consumes REST endpoints exposed by the backend:
+
+### Authentication
+- `GET /auth/login/google` → Google OAuth login.  
+- `GET /auth/logout` → Logout and clear session.  
+
+### Bookings
+- `GET /bookings?start=2025-10-18T00:00:00.000Z&end=2025-10-25T23:59:59.999Z` → Fetch bookings by range (ISO 8601 format).  
+- `POST /bookings` → Create a booking.  
+- `PATCH /bookings/:id` → Update a booking.  
+- `PATCH /bookings/:id` → Cancel a booking.  
+
+### Google Calendar Integration
+- Optional integration endpoints for syncing with Google Calendar.  
+
+---
+
+## 📖 Development Notes
+
+- **Clean Architecture Principles**:  
+  - UI components are presentation-only.  
+  - Hooks handle application logic (fetching, state, actions).  
+  - Services encapsulate external API communication.  
+  - Utilities are pure and reusable across layers.  
+
+- **Error Handling**:  
+  API client throws typed errors, ensuring consistent error management in hooks/components.  
+
+- **Type Safety**:  
+  All requests and responses are typed, separating server DTOs from UI models.  
+
+---
+
+## ✅ Benefits
+
+- **Separation of Concerns**: Each layer (UI, logic, API) is independent.  
+- **Scalability**: New endpoints or UI features can be added without breaking the structure.  
+- **Testability**: Hooks and mappers can be tested independently.  
+- **Maintainability**: Clean file organization makes the project easy to navigate.  
+
+---
+
+## 📚 References
+
+- [Next.js Docs](https://nextjs.org/docs)  
+- [React Big Calendar](https://github.com/jquense/react-big-calendar)  
+- [Tailwind CSS](https://tailwindcss.com/)  
+- [Clean Architecture – Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/The-Clean-Architecture.html)  
+
+---
