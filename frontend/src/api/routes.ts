@@ -10,6 +10,7 @@ export const routes = {
   booking: {
     list: "/bookings",
     create: "/bookings",
+    update: (id: string) => `/bookings/${id}`,
     cancel: (id: string) => `/bookings/${id}/cancel`,
   },
   integrations: {

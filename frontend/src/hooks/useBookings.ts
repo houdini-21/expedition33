@@ -78,12 +78,42 @@ export function useBookings() {
       setIsSaving(true);
       try {
         await http(routes.booking.cancel(id), { method: "PATCH" });
+        setDraft(null);
         refreshCurrentWeek();
+        toast.success("Booking cancelled successfully");
       } catch (error: unknown) {
-        toast.error((error as Error)?.message || "Failed to create booking");
+        toast.error((error as Error)?.message || "Failed to cancel booking");
       } finally {
         setIsSaving(false);
-        toast.success("Booking cancelled successfully");
+      }
+    },
+    [refreshCurrentWeek]
+  );
+
+  const updateBooking = useCallback(
+    async (payload: {
+      id: string;
+      title?: string;
+      startsAt?: Date;
+      endsAt?: Date;
+    }) => {
+      setIsSaving(true);
+      try {
+        await http(routes.booking.update(payload.id), {
+          method: "PATCH",
+          body: JSON.stringify({
+            title: payload.title,
+            startAt: payload.startsAt?.toISOString(),
+            endAt: payload.endsAt?.toISOString(),
+          }),
+        });
+        setDraft(null);
+        refreshCurrentWeek();
+        toast.success("Booking updated successfully");
+      } catch (error: unknown) {
+        toast.error((error as Error)?.message || "Failed to update booking");
+      } finally {
+        setIsSaving(false);
       }
     },
     [refreshCurrentWeek]
@@ -111,5 +141,6 @@ export function useBookings() {
     createBooking,
     cancelBooking,
     onRangeChange,
+    updateBooking,
   };
 }

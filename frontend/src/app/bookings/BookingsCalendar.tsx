@@ -29,6 +29,7 @@ export default function BookingsCalendar() {
     onRangeChange,
     refreshCurrentWeek,
     cancelBooking,
+    updateBooking,
   } = useBookings();
 
   useEffect(() => {
@@ -94,12 +95,9 @@ export default function BookingsCalendar() {
             onRangeChange={onRangeChange}
             selectable
             onSelectSlot={handleSelectSlot}
-            onSelectEvent={async (e) => {
-              console.log(e);
+            onSelectEvent={(e) => {
               if (e.status === "cancelled") return;
-              const ok = confirm(`Delete "${e.title}"?`);
-              if (!ok) return;
-              await cancelBooking(e.id as string);
+              setDraft(e);
             }}
             messages={calendarMessages}
             formats={calendarFormats}
@@ -109,9 +107,15 @@ export default function BookingsCalendar() {
 
         <div className={classNames("", draft ? "block" : "hidden")}>
           <BookingCreatePanel
-            draft={draft}
+            draft={draft as EventType}
             disabled={isSaving}
             onClose={() => setDraft(null)}
+            onCancel={async (id) => {
+              await cancelBooking(id);
+            }}
+            onUpdate={async (payload) => {
+              await updateBooking(payload);
+            }}
             onCreate={async (payload) => {
               await createBooking(payload);
             }}
