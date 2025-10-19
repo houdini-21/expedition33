@@ -44,7 +44,7 @@ export function useBookings() {
     const dateProp = api?.props?.date;
     const baseDate: Date =
       dateProp && typeof dateProp !== "string" ? dateProp : new Date();
-    const refStart = startOfWeek(baseDate, { weekStartsOn: 1 });
+    const refStart = startOfWeek(baseDate, { weekStartsOn: 0 });
     const refEnd = new Date(refStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
     fetchByRange(refStart, refEnd);
   }, [fetchByRange]);
