@@ -17,6 +17,9 @@ export class CreateBookingUseCase {
     const { userId, title, startsAt, endsAt } = cmd.input;
     if (startsAt >= endsAt) throw new BadRequestException('InvalidTimeRange');
 
+    if (startsAt < new Date() || endsAt < new Date())
+      throw new BadRequestException('Cannot create booking in the past');
+
     const isBusy = await this.googleCalendar.hasBusy(userId, startsAt, endsAt);
     if (isBusy)
       throw new BadRequestException('User is busy in Google Calendar');

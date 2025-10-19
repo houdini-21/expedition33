@@ -1,6 +1,8 @@
 import { Inject, Injectable, BadRequestException } from '@nestjs/common';
 import { BOOKING_REPOSITORY } from '@domain/repository/booking.repository';
 import type { IBookingRepository } from '@domain/repository/booking.repository';
+import { GOOGLE_CALENDAR_PORT } from '@app/ports/google-calendar.port';
+import type { IGoogleCalendarPort } from '@app/ports/google-calendar.port';
 
 type UpdateBookingExecuteCommand = {
   id: string;
@@ -14,7 +16,11 @@ type UpdateBookingExecuteCommand = {
 
 @Injectable()
 export class UpdateBookingUseCase {
-  constructor(@Inject(BOOKING_REPOSITORY) private repo: IBookingRepository) {}
+  constructor(
+    @Inject(BOOKING_REPOSITORY) private repo: IBookingRepository,
+    @Inject(GOOGLE_CALENDAR_PORT)
+    private readonly googleCalendar: IGoogleCalendarPort,
+  ) {}
 
   async execute(cmd: UpdateBookingExecuteCommand) {
     const { id, input } = cmd;
@@ -42,6 +48,13 @@ export class UpdateBookingUseCase {
     const end = new Date(input.endAt);
     if (start >= end)
       throw new BadRequestException('startAt must be before endAt');
+
+    if (start < new Date() || end < new Date())
+      throw new BadRequestException('Cannot update booking in the past');
+
+    const isBusy = await this.googleCalendar.hasBusy(input.userId, start, end);
+    if (isBusy)
+      throw new BadRequestException('User is busy in Google Calendar');
 
     const overlaps = await this.repo.findOverlaps(input.userId, start, end, {
       excludeId: id,
