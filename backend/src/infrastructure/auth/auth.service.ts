@@ -77,10 +77,14 @@ export class AuthService implements IAuthPort {
 
   logout(res: Response): void {
     const cookieName = process.env.SESSION_COOKIE_NAME || 'jwt';
+    const isProd = process.env.NODE_ENV === 'production';
     const options = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax' as const,
+      ...(isProd && process.env.SESSION_COOKIE_DOMAIN
+        ? { domain: process.env.SESSION_COOKIE_DOMAIN }
+        : {}),
       path: '/',
     };
     res.clearCookie(cookieName, options);
