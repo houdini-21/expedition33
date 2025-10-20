@@ -1,14 +1,7 @@
-import dynamic from "next/dynamic";
+import BookingsCalendar from "./BookingsCalendar";
+import TopBar from "@/components/TopBar";
+import ConnectGoogleButton from "./ConnectGoogleButton";
 
-const BookingsCalendar = dynamic(() => import("./BookingsCalendar"), {
-  ssr: true,
-});
-
-const TopBar = dynamic(() => import("@/components/TopBar"), { ssr: true });
-
-const ConnectGoogleButton = dynamic(() => import("./ConnectGoogleButton"), {
-  ssr: true,
-});
 
 export default function BookingsPage() {
   return (
