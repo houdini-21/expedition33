@@ -1,6 +1,7 @@
 export const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:4000";
 
+// Define all API routes in a structured manner
 export const routes = {
   auth: {
     login: "/auth/google",

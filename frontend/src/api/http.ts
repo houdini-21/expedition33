@@ -1,5 +1,6 @@
 import { API_BASE } from "./routes";
 
+// A generic HTTP function to make API requests
 export async function http<T>(path: string, init: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
     ...init,
