@@ -31,7 +31,7 @@ export class CreateBookingUseCase {
 
     const isBusy = await this.googleCalendar.hasBusy(userId, startsAt, endsAt);
     if (isBusy)
-      throw new BadRequestException('User is busy in Google Calendar');
+      throw new BadRequestException('Time slot busy in Google Calendar');
 
     const overlap = await this.repo.findOverlaps(userId, startsAt, endsAt);
     if (overlap) throw new BadRequestException('Time slot already taken');
