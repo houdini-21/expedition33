@@ -125,11 +125,11 @@ export class GoogleCalendarService implements IGoogleCalendarPort {
    * @returns The `authFor` function is returning a Promise that resolves to an instance of
    * `Auth.OAuth2Client`.
    */
-  private async authFor(userId: string): Promise<Auth.OAuth2Client> {
+  private async authFor(userId: string): Promise<Auth.OAuth2Client | null> {
     const oauth = this.getOauthClient();
     const creds = await this.accounts.getGoogleTokens(userId);
     if (!creds?.refreshToken) {
-      throw new UnauthorizedException('Google Calendar not connected');
+      return null;
     }
 
     oauth.setCredentials({
@@ -158,6 +158,9 @@ export class GoogleCalendarService implements IGoogleCalendarPort {
 
   async hasBusy(userId: string, start: Date, end: Date): Promise<boolean> {
     const auth = await this.authFor(userId);
+
+    if (!auth) return false;
+
     const cal = google.calendar({ version: 'v3', auth });
 
     const res = await cal.freebusy.query({
