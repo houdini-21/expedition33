@@ -22,6 +22,10 @@ export const envSchema = z.object({
   TOKEN_ENCRYPTION_KEY: z
     .string()
     .min(16, 'TOKEN_ENCRYPTION_KEY must be at least 16 characters long'),
+  FRONTEND_PUBLIC_URL: z
+    .string()
+    .url()
+    .min(1, 'FRONTEND_PUBLIC_URL is required'),
 });
 
 export type Env = z.infer<typeof envSchema>;

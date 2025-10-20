@@ -19,6 +19,7 @@ export function useBookings() {
   const [draft, setDraft] = useState<CalendarEvent | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Map server booking to calendar event
   const mapServer = (b: ServerBooking): CalendarEvent => ({
     id: b.id,
     title: b.title,
@@ -27,6 +28,7 @@ export function useBookings() {
     status: b.status,
   });
 
+  // Fetch bookings by date range
   const fetchByRange = useCallback(async (start: Date, end: Date) => {
     const qs = new URLSearchParams({
       startsAt: start.toISOString(),
@@ -39,16 +41,20 @@ export function useBookings() {
     setTitle(rangeToTitle(start, end));
   }, []);
 
+  // Refresh bookings for the current week in the calendar
   const refreshCurrentWeek = useCallback(() => {
     const api: RbcCalendarRef = calRef.current;
     const dateProp = api?.props?.date;
     const baseDate: Date =
       dateProp && typeof dateProp !== "string" ? dateProp : new Date();
+    // Calculate start and end of the week
     const refStart = startOfWeek(baseDate, { weekStartsOn: 0 });
+    // calculate end of the week (7 days later minus 1 ms)
     const refEnd = new Date(refStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
     fetchByRange(refStart, refEnd);
   }, [fetchByRange]);
 
+  // Create a new booking flow
   const createBooking = useCallback(
     async (payload: { title: string; startsAt: Date; endsAt: Date }) => {
       setIsSaving(true);
@@ -73,6 +79,7 @@ export function useBookings() {
     [refreshCurrentWeek]
   );
 
+  // Cancel an existing booking
   const cancelBooking = useCallback(
     async (id: string) => {
       setIsSaving(true);
@@ -90,6 +97,7 @@ export function useBookings() {
     [refreshCurrentWeek]
   );
 
+  // Update an existing booking
   const updateBooking = useCallback(
     async (payload: {
       id: string;
@@ -119,6 +127,7 @@ export function useBookings() {
     [refreshCurrentWeek]
   );
 
+  // Handle date range changes in the calendar using useCallback hook for memoization
   const onRangeChange = useCallback(
     (range: Date[] | { start: Date; end: Date }) => {
       if (Array.isArray(range) && range.length >= 2)

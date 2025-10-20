@@ -1,6 +1,9 @@
 FROM node:24-alpine AS deps
+
 WORKDIR /app
+
 COPY package.json yarn.lock* pnpm-lock.yaml* package-lock.json* ./
+# Install dependencies based on the lock file
 RUN set -eux; \
   if [ -f package-lock.json ]; then npm ci; \
   elif [ -f pnpm-lock.yaml ]; then corepack enable; corepack prepare pnpm@latest --activate; pnpm install --frozen-lockfile; \
@@ -8,6 +11,7 @@ RUN set -eux; \
   else npm install; fi
 
 FROM node:24-alpine AS builder
+
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 
@@ -19,12 +23,14 @@ COPY . .
 
 RUN NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL} npm run build
 
+# Production image
 FROM node:24-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Copy only the necessary files from the builder stage
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsISO8601, IsNotEmpty, MinLength } from 'class-validator';
 
+// DTO for updating an existing booking
 export class UpdateBookingDto {
   @ApiProperty()
   @IsNotEmpty()

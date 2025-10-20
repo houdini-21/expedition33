@@ -10,6 +10,16 @@ type Output = { redirectTo: string };
 export class LoginWithGoogleCallbackUseCase {
   constructor(@Inject(AUTH_PORT) private readonly auth: IAuthPort) {}
 
+  /**
+   * This TypeScript function validates a Google user, generates a token for authentication, sets a
+   * session cookie, and redirects the user after login.
+   * @param {Input}  - The `execute` function takes an `Input` object as a parameter, which includes
+   * `googleProfile` and `res`. The `googleProfile` likely contains information about the user's profile
+   * from Google authentication. The `res` parameter is likely the response object used to send the
+   * response back to the
+   * @returns The `execute` function is returning an object with a `redirectTo` property set to
+   * `this.auth.postLoginRedirect`.
+   */
   async execute({ googleProfile, res }: Input): Promise<Output> {
     const user = await this.auth.validateGoogleUser(googleProfile);
     if (!user) throw new UnauthorizedException('No user from google');

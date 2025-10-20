@@ -12,6 +12,8 @@ function cookieExtractor(req: Request): string | null {
   return null;
 }
 
+/* The JwtStrategy class in TypeScript is used for validating JWT tokens and extracting user
+information from the payload. */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {

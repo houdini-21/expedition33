@@ -6,6 +6,8 @@ import { UpdateBookingCommand } from '../../../../application/dto/commands/updat
 import { GetBookingsQuery } from '../../../../application/dto/queries/get-bookings.query';
 import { GetBookingByIdQuery } from '../../../../application/dto/queries/get-booking-by-id.query';
 
+// Mapper functions to convert HTTP DTOs to application commands/queries
+
 export function toCreateCommand(
   dto: CreateBookingDto,
   userId: string,

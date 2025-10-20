@@ -3,6 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { ConfigService } from '@nestjs/config';
 
+/* The GoogleStrategy class in TypeScript uses Passport for Google authentication and retrieves user
+information from the profile. */
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(private readonly config: ConfigService) {

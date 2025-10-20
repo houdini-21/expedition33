@@ -16,6 +16,8 @@ export default function ConnectGoogleButton() {
   const [checking, setChecking] = useState(true);
   const [connecting, setConnecting] = useState(false);
 
+
+  // fetch Google Calendar connection status
   const fetchStatus = useCallback(async () => {
     try {
       setChecking(true);
@@ -34,10 +36,12 @@ export default function ConnectGoogleButton() {
     }
   }, []);
 
+
   useEffect(() => {
     fetchStatus();
   }, [fetchStatus]);
 
+  // handle connect button click to initiate OAuth flow
   const handleConnect = async () => {
     try {
       setConnecting(true);
@@ -98,7 +102,7 @@ export default function ConnectGoogleButton() {
         )}
       </div>
 
-      {/* Acción */}
+      {/* Button for connecting to Google Calendar and show status */}
       {!isConnected && !checking ? (
         <button
           type="button"

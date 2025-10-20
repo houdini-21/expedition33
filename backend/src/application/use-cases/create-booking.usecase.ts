@@ -13,6 +13,15 @@ export class CreateBookingUseCase {
     private readonly googleCalendar: IGoogleCalendarPort,
   ) {}
 
+  /**
+   * This TypeScript function executes a command to create a booking, checking for valid time range,
+   * past dates, user availability in Google Calendar, and existing overlaps before creating the
+   * booking.
+   * @param {CreateBookingCommand} cmd - The `cmd` parameter in the `execute` function is of type
+   * `CreateBookingCommand`, which contains the following properties:
+   * @returns The `execute` function returns a Promise that resolves to an object containing the `id` of
+   * the created booking. The structure of the returned object is `{ id: string }`.
+   */
   async execute(cmd: CreateBookingCommand): Promise<{ id: string }> {
     const { userId, title, startsAt, endsAt } = cmd.input;
     if (startsAt >= endsAt) throw new BadRequestException('InvalidTimeRange');

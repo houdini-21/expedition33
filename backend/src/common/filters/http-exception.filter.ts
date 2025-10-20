@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 
+/* The HttpExceptionFilter class in TypeScript is used to catch and handle HTTP exceptions by
+formatting the response with specific information. */
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {

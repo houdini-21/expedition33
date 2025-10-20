@@ -15,6 +15,10 @@ export class CancelBookingUseCase {
     @Inject(BOOKING_REPOSITORY) private readonly repo: IBookingRepository,
   ) {}
 
+  /**
+   * The function executes a command to cancel a booking after performing necessary checks.
+   * @param {CancelBookingCommand} cmd - CancelBookingCommand
+   */
   async execute(cmd: CancelBookingCommand): Promise<void> {
     const {
       id,

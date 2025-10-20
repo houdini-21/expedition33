@@ -34,6 +34,19 @@ export class UpdateBookingUseCase {
       userId: input.userId,
     });
   }
+  /**
+   * This TypeScript function updates a booking with validation checks for date/time, user ownership,
+   * calendar availability, and booking status.
+   * @param {string} id - The `id` parameter in the `update` function represents the unique identifier of
+   * the booking that you want to update. It is used to identify the specific booking record in the
+   * database that needs to be modified.
+   * @param input - The `update` method you provided is used to update a booking with the specified `id`.
+   * The `input` parameter contains the new information for the booking, including the `title`,
+   * `startAt`, `endAt`, and `userId`.
+   * @returns The `update` method is returning the result of updating a booking with the provided `id`
+   * using the input data such as `title`, `startAt`, and `endAt`. The booking is updated with the new
+   * title and start/end times specified in the input.
+   */
 
   async update(
     id: string,

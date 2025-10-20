@@ -46,6 +46,7 @@ export default function BookingsCalendar() {
     [title]
   );
 
+  // Customize event appearance to have no background or border
   const eventPropGetter = () => ({
     style: {
       backgroundColor: "transparent",
@@ -55,6 +56,7 @@ export default function BookingsCalendar() {
     },
   });
 
+  // Handle selecting a time slot to create a new booking
   const handleSelectSlot = (slotInfo: SlotInfo) => {
     setDraft({
       id: "draft",

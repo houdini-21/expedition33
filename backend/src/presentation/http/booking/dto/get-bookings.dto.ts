@@ -1,6 +1,7 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsISO8601, IsIn, IsInt, IsOptional, Min } from 'class-validator';
 
+// DTO for retrieving bookings with optional filters
 export class GetBookingsDto {
   @ApiPropertyOptional()
   @IsOptional()

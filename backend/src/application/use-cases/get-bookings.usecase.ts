@@ -11,6 +11,19 @@ export class GetBookingsUseCase {
     private readonly repo: IBookingRepository,
   ) {}
 
+  /**
+   * This function executes a query to retrieve bookings based on a user ID, date range, and status,
+   * returning an array of BookingResult objects with specific properties.
+   * @param {GetBookingsQuery} query - The `execute` function takes a `GetBookingsQuery` object as a
+   * parameter. The `GetBookingsQuery` object likely contains information needed to retrieve bookings,
+   * such as the `userId`, `from` date, and `to` date.
+   * @returns The `execute` function is returning an array of `BookingResult` objects. Each
+   * `BookingResult` object contains the following properties:
+   * - `id` (string): The booking ID
+   * - `title` (string): The title of the booking
+   * - `startsAt` (Date): The start date and time of the booking
+   * - `endsAt` (Date): The end date and
+   */
   async execute(query: GetBookingsQuery): Promise<BookingResult[]> {
     const { userId } = query;
 

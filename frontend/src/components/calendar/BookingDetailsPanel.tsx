@@ -36,6 +36,7 @@ export default function BookingCreatePanel({
   const [endTime, setEndTime] = useState("10:00");
   const [isEditing, setIsEditing] = useState(false);
 
+  // Update local state when draft changes
   useEffect(() => {
     if (!draft) return;
     setIsEditing(draft.id !== "draft");
@@ -46,13 +47,16 @@ export default function BookingCreatePanel({
     setEndTime(e);
   }, [draft]);
 
+  // Formatted date label for the booking
   const dateLabel = useMemo(() => {
     if (!draft) return "";
     return format(draft.startsAt, "EEEE, MMM d, yyyy");
   }, [draft]);
 
+  // Determine if the form can be saved
   const canSave = !!draft && title.trim().length > 0 && !disabled;
 
+  // Build start and end Date objects from time inputs
   const buildDates = () => {
     if (!draft) return null;
     const [sh, sm] = startTime.split(":").map(Number);
@@ -143,6 +147,7 @@ export default function BookingCreatePanel({
             )}
             disabled={!canSave}
             onClick={async () => {
+              // Validate and update booking
               const built = buildDates();
               if (!built) return;
               const startHour = built.start.getHours();
@@ -169,6 +174,7 @@ export default function BookingCreatePanel({
             )}
             disabled={!canSave}
             onClick={async () => {
+              // Validate and create booking
               const built = buildDates();
               if (!built) return;
               const startHour = built.start.getHours();
