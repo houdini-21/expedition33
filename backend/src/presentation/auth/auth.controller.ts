@@ -24,6 +24,7 @@ export class AuthController {
   }
 
   @Get('google/callback')
+  @ApiOperation({ summary: 'Google OAuth callback' })
   @UseGuards(AuthGuard('google'))
   async googleCallback(
     @Req() req: any,
@@ -37,6 +38,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @ApiOperation({ summary: 'Get info about the logged in user' })
   @UseGuards(AuthGuard('jwt'))
   async me(@Req() req: any) {
     const { user } = await this.getMeUc.execute({ userId: req.user.userId });
@@ -45,6 +47,7 @@ export class AuthController {
   }
 
   @Get('logout')
+  @ApiOperation({ summary: 'Logout the user' })
   @UseGuards(AuthGuard('jwt'))
   logout(@Res({ passthrough: true }) res: Response) {
     return this.logoutUc.execute({ res });
